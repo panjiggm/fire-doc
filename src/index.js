@@ -27,7 +27,10 @@ import 'firebase/auth'
  // Initialize Firebase
  firebase.initializeApp(firebaseConfig);
 
-const store = createStore(rootReducer, compose( applyMiddleware(thunk.withExtraArgument( {getFirestore} )), reduxFirestore(firebase)))
+const store = createStore(rootReducer, compose( 
+   applyMiddleware(thunk.withExtraArgument( {getFirestore} )), 
+   reduxFirestore(firebase)
+))
 
 const rrfProps = {
    firebase,
@@ -37,10 +40,7 @@ const rrfProps = {
 	},
    dispatch: store.dispatch,
    createFirestoreInstance
-}
-
-// const Root = () => {}
-   
+}   
 
 ReactDOM.render(
    <Provider store={store} > 
