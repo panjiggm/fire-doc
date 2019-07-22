@@ -7,21 +7,46 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import rootReducer from './store/reducers/rootReducer'
 import thunk from 'redux-thunk'
-import { getFirestore, reduxFirestore } from 'redux-firestore'
-import { getFirebase, reactReduxFirebase } from 'react-redux-firebase'
-import firebase from './config/fbConfig'
+import { getFirestore, createFirestoreInstance, reduxFirestore } from 'redux-firestore'
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+import 'firebase/auth'
 
-const store = createStore(rootReducer, 
-   compose(
-      applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
-      reduxFirestore(firebase),
-      reactReduxFirebase(firebase)
-   )   
-)
+ // Your web app's Firebase configuration
+ const firebaseConfig = {
+   apiKey: "AIzaSyADDqYjL02ytD2ooiNRVA4REz4RGHk6JVs",
+   authDomain: "fire-doc.firebaseapp.com",
+   databaseURL: "https://fire-doc.firebaseio.com",
+   projectId: "fire-doc",
+   storageBucket: "",
+   messagingSenderId: "4057329257",
+   appId: "1:4057329257:web:8bb3d9ee16a42b8a"
+ };
+
+ // Initialize Firebase
+ firebase.initializeApp(firebaseConfig);
+
+const store = createStore(rootReducer, compose( applyMiddleware(thunk.withExtraArgument( {getFirestore} )), reduxFirestore(firebase)))
+
+const rrfProps = {
+   firebase,
+   config: {
+      userProfile: "users",
+      useFirestoreForProfile: true
+	},
+   dispatch: store.dispatch,
+   createFirestoreInstance
+}
+
+// const Root = () => {}
+   
 
 ReactDOM.render(
    <Provider store={store} > 
-      <App />
+      <ReactReduxFirebaseProvider {...rrfProps}>
+         <App />
+      </ReactReduxFirebaseProvider>
    </Provider>, 
    document.getElementById('root')
 );
